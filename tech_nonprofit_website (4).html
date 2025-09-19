@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OnAI - Coming Soon</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+            line-height: 1.6;
+            height: 100vh;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 80%, rgba(59, 180, 113, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(140, 82, 254, 0.25) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(24, 0, 172, 0.2) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(1deg); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            position: relative;
+        }
+
+        .logo-square {
+            width: 8px;
+            height: 8px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .logo-square:nth-child(1) {
+            top: 0;
+            background: #ffffff;
+        }
+
+        .logo-square:nth-child(2) {
+            top: 12px;
+            background: #8C52FE;
+        }
+
+        .logo-square:nth-child(3) {
+            top: 24px;
+            background: #3BB471;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #3BB471, #8C52FE);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .contact-cta {
+            background: linear-gradient(45deg, #3BB471, #8C52FE);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(59, 180, 113, 0.3);
+            cursor: pointer;
+        }
+
+        .contact-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 180, 113, 0.4);
+            color: white;
+        }
+
+        /* Matrix Code Rain */
+        .matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: auto;
+            z-index: -1;
+            overflow: hidden;
+            cursor: grab;
+        }
+
+        .matrix-rain.dragging {
+            cursor: grabbing;
+        }
+
+        .code-column {
+            position: absolute;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 18px;
+            white-space: nowrap;
+            animation: fall linear infinite;
+            opacity: 0.15;
+            transition: opacity 0.3s ease;
+            user-select: none;
+            text-shadow: 0 0 3px currentColor;
+        }
+
+        .code-column:hover {
+            opacity: 0.35;
+            z-index: 10;
+            text-shadow: 0 0 8px currentColor;
+        }
+
+        .code-column.dragging {
+            opacity: 0.7;
+            z-index: 20;
+            animation-play-state: paused;
+            text-shadow: 0 0 15px currentColor;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.15;
+            }
+            90% {
+                opacity: 0.15;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        /* Interactive Code Particles */
+        .code-particle {
+            position: absolute;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #3BB471;
+            pointer-events: none;
+            animation: particleFade 2s ease-out forwards;
+            z-index: 50;
+        }
+
+        @keyframes particleFade {
+            0% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.5) rotate(360deg) translateY(-50px);
+            }
+        }
+
+        /* Coming Soon Section */
+        .coming-soon {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            padding: 0 2rem;
+        }
+
+        .coming-soon h1 {
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            margin-top: 2rem;
+            background: linear-gradient(45deg, #ffffff, #3BB471, #8C52FE);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGlow 3s ease-in-out infinite alternate;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .coming-soon h1::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.4) 25%,
+                rgba(255, 255, 255, 0.8) 50%,
+                rgba(255, 255, 255, 0.4) 75%,
+                transparent 100%
+            );
+            animation: sparkleRipple 3s ease-in-out infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .coming-soon h1::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(140, 82, 254, 0.6) 30%,
+                rgba(255, 255, 255, 0.9) 50%,
+                rgba(59, 180, 113, 0.6) 70%,
+                transparent 100%
+            );
+            animation: sparkleRipple2 4s ease-in-out infinite;
+            animation-delay: 1.5s;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes sparkleRipple {
+            0% {
+                left: -100%;
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                left: 100%;
+                opacity: 0;
+            }
+        }
+
+        @keyframes sparkleRipple2 {
+            0% {
+                left: -150%;
+                opacity: 0;
+                transform: scale(1);
+            }
+            25% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+            75% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+            100% {
+                left: 150%;
+                opacity: 0;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes textGlow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.2); }
+        }
+
+        .coming-soon .subtitle {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            font-weight: 600;
+            background: linear-gradient(45deg, #8C52FE, #3BB471);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .coming-soon .description {
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+            max-width: 600px;
+            line-height: 1.8;
+        }
+
+        .stay-tuned-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 3rem 2rem;
+            margin-top: 2rem;
+            max-width: 500px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(59, 180, 113, 0.1);
+        }
+
+        .stay-tuned-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.7s;
+        }
+
+        .stay-tuned-card:hover::before {
+            left: 100%;
+        }
+
+        .stay-tuned-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 35px 70px rgba(59, 180, 113, 0.2);
+        }
+
+        .loading-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+        }
+
+        .loading-dots span {
+            height: 8px;
+            width: 8px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #3BB471, #8C52FE);
+            display: block;
+            margin: 0 4px;
+            animation: loadingDots 1.4s infinite ease-in-out both;
+        }
+
+        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes loadingDots {
+            0%, 80%, 100% { 
+                transform: scale(0.8);
+                opacity: 0.5;
+            } 
+            40% { 
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .contact-info {
+            margin-top: 2rem;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .contact-info a {
+            color: #3BB471;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .contact-info a:hover {
+            color: #8C52FE;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .coming-soon h1 {
+                font-size: 2.5rem;
+            }
+            
+            .coming-soon .subtitle {
+                font-size: 1.4rem;
+            }
+            
+            .stay-tuned-card {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="matrix-rain" id="matrixRain"></div>
+
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <div class="logo-square"></div>
+                    <div class="logo-square"></div>
+                    <div class="logo-square"></div>
+                </div>
+                <div class="logo-text">OnAI</div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="mailto:info@theonaiplatform.org" class="contact-cta">Contact Us</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="coming-soon">
+        <h1>We're investing directly in the youth</h1>
+        <p class="subtitle">Stay Tuned</p>
+        <p class="description">
+            Something amazing is coming. We're building the future of ethical AI education and youth empowerment.
+        </p>
+        
+        <div class="stay-tuned-card">
+            <div class="loading-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="contact-info">
+                Get early access: <a href="mailto:info@theonaiplatform.org">info@theonaiplatform.org</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Matrix Rain Effect
+        let dragState = {
+            isDragging: false,
+            currentColumn: null,
+            startX: 0,
+            startY: 0,
+            offsetX: 0,
+            offsetY: 0
+        };
+
+        function createMatrixRain() {
+            const matrixContainer = document.getElementById('matrixRain');
+            const codeSnippets = [
+                'if (ai.learning) {',
+                '  return future;',
+                '}',
+                'function empowerMinds() {',
+                '  const knowledge = new AI();',
+                '  return knowledge.share();',
+                '}',
+                'class Innovation {',
+                '  constructor() {',
+                '    this.ethics = true;',
+                '    this.accessibility = true;',
+                '  }',
+                '}',
+                'const onAI = new Organization();',
+                'onAI.mission = "empower";',
+                'while (true) {',
+                '  learn();',
+                '  innovate();',
+                '  connect();',
+                '}',
+                'import { future } from "technology";',
+                'export default responsibility;',
+                '// Building tomorrow today',
+                'async function evolve() {',
+                '  await collaboration();',
+                '  return progress;',
+                '}',
+                'const values = [',
+                '  "innovation",',
+                '  "ethics",',
+                '  "inclusion"',
+                '];',
+                'for (let mind of youngMinds) {',
+                '  mind.empower();',
+                '}',
+                'if (ethical && innovative) {',
+                '  implement(solution);',
+                '}',
+                'const network = connect(global);',
+                'network.share(knowledge);',
+                'AI.ensure(ethics);',
+                'platform.accessibility = true;'
+            ];
+
+            // Create columns across the screen
+            const columnWidth = 100;
+            const numColumns = Math.ceil(window.innerWidth / columnWidth) + 2;
+            
+            for (let i = 0; i < numColumns; i++) {
+                setTimeout(() => {
+                    createColumn(i * columnWidth, codeSnippets);
+                }, Math.random() * 3000);
+            }
+        }
+
+        function createColumn(x, codeSnippets) {
+            const column = document.createElement('div');
+            column.className = 'code-column';
+            column.style.left = x + 'px';
+            column.style.animationDuration = (Math.random() * 4 + 3) + 's';
+            
+            // Random color variation using logo colors
+            const colors = ['#3BB471', '#8C52FE', '#FFFFFF', '#1800AC'];
+            column.style.color = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Create clean code content
+            let codeContent = '';
+            const numLines = Math.floor(Math.random() * 15) + 8;
+            for (let i = 0; i < numLines; i++) {
+                codeContent += codeSnippets[Math.floor(Math.random() * codeSnippets.length)] + '\n';
+            }
+            column.textContent = codeContent;
+            
+            // Add drag functionality
+            addDragFunctionality(column);
+            
+            document.getElementById('matrixRain').appendChild(column);
+            
+            // Remove column after animation and create new one
+            setTimeout(() => {
+                if (column.parentNode && !column.classList.contains('dragging')) {
+                    column.parentNode.removeChild(column);
+                }
+                // Create new column to maintain flow
+                setTimeout(() => {
+                    createColumn(x, codeSnippets);
+                }, Math.random() * 2000);
+            }, parseFloat(column.style.animationDuration) * 1000);
+        }
+
+        function addDragFunctionality(column) {
+            column.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                dragState.isDragging = true;
+                dragState.currentColumn = column;
+                dragState.startX = e.clientX;
+                dragState.startY = e.clientY;
+                
+                const rect = column.getBoundingClientRect();
+                dragState.offsetX = e.clientX - rect.left;
+                dragState.offsetY = e.clientY - rect.top;
+                
+                column.classList.add('dragging');
+                column.style.zIndex = '100';
+                
+                document.body.style.cursor = 'grabbing';
+                document.getElementById('matrixRain').classList.add('dragging');
+            });
+        }
+
+        // Global mouse move handler
+        document.addEventListener('mousemove', (e) => {
+            if (dragState.isDragging && dragState.currentColumn) {
+                const column = dragState.currentColumn;
+                const newX = e.clientX - dragState.offsetX;
+                const newY = e.clientY - dragState.offsetY;
+                
+                column.style.left = newX + 'px';
+                column.style.top = newY + 'px';
+                column.style.transform = 'none';
+                
+                if (Math.random() < 0.3) {
+                    createCodeParticle(e.clientX, e.clientY);
+                }
+            }
+            
+            if (!dragState.isDragging && Math.random() < 0.1) {
+                createCodeParticle(e.clientX, e.clientY);
+            }
+        });
+
+        // Global mouse up handler
+        document.addEventListener('mouseup', () => {
+            if (dragState.isDragging && dragState.currentColumn) {
+                const column = dragState.currentColumn;
+                
+                setTimeout(() => {
+                    column.classList.remove('dragging');
+                    column.style.zIndex = '';
+                    column.style.transform = '';
+                    
+                    const rect = column.getBoundingClientRect();
+                    for (let i = 0; i < 8; i++) {
+                        setTimeout(() => {
+                            createCodeParticle(
+                                rect.left + Math.random() * rect.width,
+                                rect.top + Math.random() * rect.height
+                            );
+                        }, i * 50);
+                    }
+                }, 500);
+                
+                document.body.style.cursor = '';
+                document.getElementById('matrixRain').classList.remove('dragging');
+            }
+            
+            dragState.isDragging = false;
+            dragState.currentColumn = null;
+        });
+
+        function createCodeParticle(x, y) {
+            const particles = [
+                'AI()', 'ML', 'DL', 'NLP', 'CV', 'RL', 'GAN', 'BERT', 'GPT', 'LLM',
+                'tf.', 'torch.', 'np.', 'pd.', 'plt.', 'sk.', 'cv2.',
+                '{ }', '[ ]', '( )', '=>', '&&', '||', '++', '--', '**', '//',
+                'async', 'await', 'const', 'let', 'var', 'def', 'class', 'import',
+                'if', 'else', 'for', 'while', 'try', 'catch', 'finally',
+                '01010', '11001', '00110', '10101', '01100', '11010',
+                'ethics', 'safety', 'bias', 'fair', 'open', 'trust', 'onAI'
+            ];
+            
+            const particle = document.createElement('div');
+            particle.className = 'code-particle';
+            particle.textContent = particles[Math.floor(Math.random() * particles.length)];
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            
+            document.body.appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 2000);
+        }
+
+        // Click interaction
+        document.addEventListener('click', (e) => {
+            if (!dragState.isDragging) {
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        createCodeParticle(
+                            e.clientX + (Math.random() - 0.5) * 150,
+                            e.clientY + (Math.random() - 0.5) * 150
+                        );
+                    }, i * 60);
+                }
+            }
+        });
+
+        // Initialize matrix rain when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            createMatrixRain();
+        });
+    </script>
+</body>
+</html>
